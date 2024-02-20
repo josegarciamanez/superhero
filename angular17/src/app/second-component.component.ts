@@ -3,6 +3,8 @@ import { UserService } from './services/app.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
+import { Hero } from './models/user.interface';
+
 
 @Component({
   selector: 'app-first-component',
@@ -14,17 +16,24 @@ import { Observable } from 'rxjs';
     <p>Heroes list</p>
     <ul>
       @for (hero of heroes$ | async; track hero.id) {
-          <li> {{ hero.nombre }}</li>
+          <li> {{ hero.name }}</li>
+          @if(hero.image_url) {
+            <img class="hero-image" [src]='hero.image_url' />
+          }
       } @empty {
         Empty list of heroes
       }
     </ul>
   </div>
   `,
-  styles: [],
+  styles: [`
+    .hero-image {
+      width: 200px
+    }
+  `],
 })
 export class SecondComponent {
-  public heroes$: Observable<any[]> = this.userService.getHeroes();
+  public heroes$: Observable<Hero[]> = this.userService.getHeroes();
 
   constructor(private userService: UserService) {}
 }
