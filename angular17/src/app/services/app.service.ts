@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { Hero, User } from '../models/user.interface';
+import { Hero } from '../models/user.interface';
+import Swal from 'sweetalert2'
 
 const heroes: Hero[] = [
   {
@@ -95,6 +96,13 @@ export class UserService {
     if (heroIndex !== -1) {
       heroes.splice(heroIndex, 1);
       this.numberOfHeroes.next(heroes.length);
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Heroe eliminado correctamente",
+        showConfirmButton: false,
+        timer: 3000
+      });
     }
   }
 }
