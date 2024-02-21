@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { AddHeroDialogComponent } from './components/add-hero-dialog.component';
 
 
 
@@ -29,7 +27,7 @@ import { AddHeroDialogComponent } from './components/add-hero-dialog.component';
   </mat-toolbar>
   <router-outlet></router-outlet>
   <div class="fixed-action-button">
-  <button mat-fab color="primary" aria-label="Add" (click)="openAddHeroDialog()>
+  <button mat-fab color="primary" aria-label="Add" (click)="openAddHeroDialog()">
     <mat-icon>add</mat-icon>
     </button>
   </div>
@@ -49,13 +47,10 @@ import { AddHeroDialogComponent } from './components/add-hero-dialog.component';
 export class AppComponent {
   title = 'superhero APP';
   firstComponent = { title: 'Lista Usuarios' };
-  constructor(public dialog: MatDialog) {}
 
-  openAddHeroDialog(): void {
-    const dialogRef = this.dialog.open(AddHeroDialogComponent);
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('El dialogo fue cerrado');
-      console.log(result);
-    });
+  constructor(private router: Router){}
+
+  openAddHeroDialog() {
+    this.router.navigate(['add-hero'])
   }
 }
