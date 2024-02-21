@@ -12,7 +12,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { Router } from '@angular/router';
-
+import Swal from 'sweetalert2'
 
 @Component({
   selector: 'app-first-component',
@@ -71,7 +71,7 @@ import { Router } from '@angular/router';
   `],
 })
 
-export class SecondComponent implements OnInit {
+export class HeroComponent implements OnInit {
   myControl = new FormControl('');
   options$: Observable<string[]> = this.userService.options$;
   filteredOptions!: Observable<string[]>;
@@ -92,13 +92,25 @@ export class SecondComponent implements OnInit {
   }
 
   editHero(hero: Hero): void {
-    this.userService.editHero(hero.id, hero.name, hero.image_url)
+    this.router.navigate(['/add-hero'], { state: { hero: hero } });
   }
   
   async deleteHero(hero: Hero): Promise<void> {
-    this.userService.deleteHero(hero.id)
-    await this.router.navigate(['/add-hero']);
-    this.reloadPage();
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción borrará el héroe!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#673bb7",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, borrar!"
+    }).then(async (result) => { 
+      if (result.isConfirmed) {
+        await this.userService.deleteHero(hero.id);
+        await this.router.navigate(['/add-hero']);
+        this.reloadPage();
+      }
+    });
   }
 
   reloadPage() {
