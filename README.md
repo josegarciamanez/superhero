@@ -1,6 +1,6 @@
 # Heroes app
 
-[Edit in StackBlitz next generation editor ⚡️](https://stackblitz.com/~/github.com/josegarciamanez/superhero)
+[Ver sanbox en StackBlitz ⚡️](https://stackblitz.com/~/github.com/josegarciamanez/superhero)
 
 
 ### Instalar el Sandbox
