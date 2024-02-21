@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Hero } from '../models/user.interface';
 import { UserService } from '../services/app.service';
 import { Observable, take, tap } from 'rxjs';
@@ -67,12 +67,10 @@ export class AddHeroDialogComponent {
   imageUrl: string = '';
   heroes$: Observable<Hero[]> = this.userService.getHeroes();
   editHeroe: boolean = false;
-  
 
   constructor(private router: Router, private userService: UserService) {
     const navigation = this.router.getCurrentNavigation();
     const hero = (navigation?.extras?.state as { hero: Hero })?.hero;
-
     if (hero) {
       this.name = hero.name;
       this.imageUrl = hero.image_url;

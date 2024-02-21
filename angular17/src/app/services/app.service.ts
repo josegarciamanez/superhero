@@ -50,15 +50,13 @@ export class UserService {
 
   private heroes: Hero[] = [];
 
-  constructor(private http: HttpClient) {
-  }
-
+  constructor(private http: HttpClient) {}
 
   getHeroes(searchValue: string | null = ''): Observable<Hero[]> {
     // Aquí hariamos la llamada al backend, de momento está con un mock
     // Se agrega un delay para que tenga un pequeño retardo la llamada y muestre el spinner de carga
     return of(heroes).pipe(
-      delay(3000),
+      delay(1000),
       tap((heroes) => {
         this.heroes = heroes;
         this.numberOfHeroes.next(heroes.length)}),
@@ -92,9 +90,7 @@ export class UserService {
   }
   
   deleteHero(heroId: number): void {
-    
     const heroIndex = heroes.findIndex(hero => hero.id === heroId);
-    
     if (heroIndex !== -1) {
       heroes.splice(heroIndex, 1);
       this.numberOfHeroes.next(heroes.length);
