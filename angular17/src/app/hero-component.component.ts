@@ -1,16 +1,17 @@
-import {Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from './services/app.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { Hero } from './models/user.interface';
-import {MatButtonModule} from '@angular/material/button';
-import {MatCardModule} from '@angular/material/card';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {map, startWith, switchMap} from 'rxjs/operators';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { map, startWith, switchMap } from 'rxjs/operators';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2'
 
@@ -26,6 +27,7 @@ import Swal from 'sweetalert2'
     MatInputModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
+    MatProgressSpinnerModule
     ],
   providers: [UserService],
   template: `
@@ -59,7 +61,9 @@ import Swal from 'sweetalert2'
           </mat-card-actions>
         </mat-card>
       } @empty {
-        Empty list of heroes
+        <div class="spinner-container">
+          <mat-spinner></mat-spinner>
+        </div>
       }
     </ul>
   </div>
@@ -67,6 +71,12 @@ import Swal from 'sweetalert2'
   styles: [`
     .example-card {
       max-width: 400px;
+    }
+
+    .spinner-container {
+      width: 100%;
+      display: grid;
+      place-items: center;
     }
   `],
 })

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
+import { delay, map, take, tap } from 'rxjs/operators';
 import { Hero } from '../models/user.interface';
 import Swal from 'sweetalert2'
 
@@ -56,7 +56,9 @@ export class UserService {
 
   getHeroes(searchValue: string | null = ''): Observable<Hero[]> {
     // Aquí hariamos la llamada al backend, de momento está con un mock
+    // Se agrega un delay para que tenga un pequeño retardo la llamada y muestre el spinner de carga
     return of(heroes).pipe(
+      delay(3000),
       tap((heroes) => {
         this.heroes = heroes;
         this.numberOfHeroes.next(heroes.length)}),
