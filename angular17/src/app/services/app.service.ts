@@ -1,8 +1,41 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { Hero, User } from '../models/user.interface';
+
+const heroes: Hero[] = [
+  {
+    "id": 1,
+    "name": "Spider-Man",
+    "image_url": "https://blog.es.playstation.com/tachyon/sites/14/2022/06/adf0c6e3da060a9f9581c12eff047a48668fe616.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Batman",
+    "image_url": "https://image.api.playstation.com/vulcan/img/rnd/202010/1520/F1WFbqD8WCEWYGErUSk1OAOf.png"
+  },
+  {
+    "id": 3,
+    "name": "Superman",
+    "image_url": "https://cadenaser.com/resizer/nb92V29QzoN5KP8yaNWf_zE9eyE=/1200x675/filters:format(jpg):quality(70)/cloudfront-eu-central-1.images.arcpublishing.com/prisaradio/OZRTFH56RRB27N5BYZX56WPERU.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Iron Man",
+    "image_url": "https://www.mundodeportivo.com/alfabeta/hero/2023/12/iron-man-endgame-ucm.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Wonder Woman",
+    "image_url": "https://i.blogs.es/fc7807/wonder-woman0/450_1000.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Hulk",
+    "image_url": "https://cdn.businessinsider.es/sites/navi.axelspringer.es/public/media/image/2021/09/increible-hulk-2456955.jpg"
+  }
+]
 
 @Injectable({
   providedIn: 'root',
@@ -19,12 +52,10 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>('https://jsonplaceholder.typicode.com/users');
-  }
 
   getHeroes(searchValue: string | null = ''): Observable<Hero[]> {
-    return this.http.get<Hero[]>('https://65d38d62522627d50109227e.mockapi.io/api/v1/superheroes').pipe(
+    // Aquí hariamos la llamada al backend, de momento está con un mock
+    return of(heroes).pipe(
       tap((heroes) => {
         this.heroes = heroes;
         this.numberOfHeroes.next(heroes.length)}),
@@ -40,15 +71,30 @@ export class UserService {
   postHeroes(name: string, imageUrl: string): void {
     this.numberOfHeroes$.pipe(take(1)).subscribe((numberOfHeroes) => {
       const newHero: Hero = {
-        id: 8,
+        id: numberOfHeroes + 1,
         name: name,
         image_url: imageUrl
       }
-      this.heroes.push(newHero);
-      this.http.post<Hero[]>('https://65d38d62522627e.mockapi.io/api/v1/superheroes', this.heroes).subscribe(response => {
-        console.log('Response from POST request:', response);
-        this.numberOfHeroes.next(numberOfHeroes + 1);
-      });
+      heroes.push(newHero);
+      this.numberOfHeroes.next(heroes.length);
+      this.getHeroes();
     });
+  }
+
+  editHero(heroId: number, name: string, imageUrl: string): void {
+    const heroIndex = heroes.findIndex(hero => hero.id === heroId);
+    if (heroIndex !== -1) {
+      heroes[heroIndex] = { id: heroId, name, image_url: imageUrl };
+    }
+  }
+  
+  deleteHero(heroId: number): void {
+    
+    const heroIndex = heroes.findIndex(hero => hero.id === heroId);
+    
+    if (heroIndex !== -1) {
+      heroes.splice(heroIndex, 1);
+      this.numberOfHeroes.next(heroes.length);
+    }
   }
 }

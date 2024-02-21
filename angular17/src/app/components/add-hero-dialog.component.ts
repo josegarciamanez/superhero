@@ -24,20 +24,27 @@ providers: [UserService],
   template: `
   <div class="container mt-4 d-flex flex-column">
     <h1>Agregar héroe</h1>
-      <mat-form-field>
-        <mat-label>Nombre</mat-label>
-        <input matInput [(ngModel)]="name">
+    <mat-form-field>
+      <mat-label>Nombre</mat-label>
+        <input matInput [(ngModel)]="name" name="name" required>
+        @if(!name) {
+          <mat-error>El nombre es obligatorio</mat-error>
+        }
       </mat-form-field>
+    
       <mat-form-field>
         <mat-label>URL de la imagen</mat-label>
-        <input matInput [(ngModel)]="imageUrl">
+        <input matInput [(ngModel)]="imageUrl" name="imageUrl" required>
+        @if(!imageUrl) {
+          <mat-error>La url es obligatoria</mat-error>
+        }
       </mat-form-field>
-  
+    
       </div>
       <div class="d-flex container">
         <span class="example-spacer"></span>
         <button mat-button (click)="onCancel()">Cancelar</button>
-        <button mat-button (click)="onAddHero()">Agregar</button>
+        <button mat-button (click)="onAddHero()" [disabled]="!name || !imageUrl">Agregar</button>
       </div>
   `,
     styles: [`
@@ -62,5 +69,6 @@ export class AddHeroDialogComponent {
 
   onAddHero(): void{
     this.userService.postHeroes(this.name, this.imageUrl);
+    this.router.navigate(['/'])
   }
 }

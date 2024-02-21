@@ -11,12 +11,17 @@ import {map, startWith, switchMap} from 'rxjs/operators';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import { Router } from '@angular/router';
 
 
 @Component({
   selector: 'app-first-component',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, MatCardModule, MatButtonModule,FormsModule,
+  imports: [HttpClientModule, 
+    CommonModule, 
+    MatCardModule, 
+    MatButtonModule,
+    FormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
@@ -49,8 +54,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
           </mat-card-header>
           <img mat-card-image class="h-100"  [src]='hero.image_url' alt="hero.name">
           <mat-card-actions>
-            <button mat-button>Edit</button>
-            <button mat-button>Delete</button>
+            <button mat-button (click)="editHero(hero)">Edit</button>
+            <button mat-button (click)="deleteHero(hero)">Delete</button>
           </mat-card-actions>
         </mat-card>
       } @empty {
@@ -72,7 +77,7 @@ export class SecondComponent implements OnInit {
   filteredOptions!: Observable<string[]>;
   heroes$: Observable<Hero[]>;
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService, private router: Router) {
     this.heroes$ = this.myControl.valueChanges.pipe(
       startWith(''),
       switchMap(value => this.userService.getHeroes(value))
@@ -84,6 +89,20 @@ export class SecondComponent implements OnInit {
       startWith(''),
       map(value => this._filter(value || ''))
     );
+  }
+
+  editHero(hero: Hero): void {
+    this.userService.editHero(hero.id, hero.name, hero.image_url)
+  }
+  
+  async deleteHero(hero: Hero): Promise<void> {
+    this.userService.deleteHero(hero.id)
+    await this.router.navigate(['/add-hero']);
+    this.reloadPage();
+  }
+
+  reloadPage() {
+    this.router.navigate(['/']);
   }
 
   private _filter(value: string): string[] {

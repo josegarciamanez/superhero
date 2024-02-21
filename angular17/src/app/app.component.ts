@@ -6,7 +6,6 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 
 
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -26,11 +25,14 @@ import {MatButtonModule} from '@angular/material/button';
     </button>
   </mat-toolbar>
   <router-outlet></router-outlet>
-  <div class="fixed-action-button">
-  <button mat-fab color="primary" aria-label="Add" (click)="openAddHeroDialog()">
-    <mat-icon>add</mat-icon>
+  @if(showFabButton()) {
+    <div class="fixed-action-button">
+    <button mat-fab color="primary" aria-label="Add" (click)="openAddHeroDialog()">
+      <mat-icon>add</mat-icon>
     </button>
-  </div>
+    </div>
+  }
+
   `,
   styles: [`
   .example-spacer {
@@ -52,5 +54,9 @@ export class AppComponent {
 
   openAddHeroDialog() {
     this.router.navigate(['add-hero'])
+  }
+
+  showFabButton(): boolean {
+    return this.router.url === '/second-component';
   }
 }
