@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit } from '@angular/core';
 import { UserService } from './services/app.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -6,15 +6,41 @@ import { Observable } from 'rxjs';
 import { Hero } from './models/user.interface';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {map, startWith} from 'rxjs/operators';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 
 @Component({
   selector: 'app-first-component',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, MatCardModule, MatButtonModule],
+  imports: [HttpClientModule, CommonModule, MatCardModule, MatButtonModule,FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    ReactiveFormsModule,
+    ],
   providers: [UserService],
   template: `
   <div class="container">
+    <form class="example-form">
+    <mat-form-field class="example-full-width">
+      <mat-label>SuperHero</mat-label>
+      <input type="text"
+            placeholder="Selecciona"
+            aria-label="SuperHero"
+            matInput
+            [formControl]="myControl"
+            [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete">
+        @for (option of filteredOptions | async; track option) {
+          <mat-option [value]="option">{{option}}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
     <ul class="d-flex flex-wrap w-100">
       @for (hero of heroes$ | async; track hero.id) {
         <mat-card class="example-card me-3 mb-3">
@@ -39,8 +65,30 @@ import {MatCardModule} from '@angular/material/card';
     }
   `],
 })
-export class SecondComponent {
-  public heroes$: Observable<Hero[]> = this.userService.getHeroes();
+
+export class SecondComponent implements OnInit {
+  myControl = new FormControl('');
+  options$: Observable<string[]> = this.userService.options$;
+  filteredOptions!: Observable<string[]>;
+  heroes$: Observable<Hero[]> = this.userService.getHeroes();
 
   constructor(private userService: UserService) {}
+
+  ngOnInit() {
+    this.filteredOptions = this.myControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || ''))
+    );
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    let filteredOptions: string[] = [];
+    this.options$.subscribe(options => {
+      filteredOptions = options.filter(option => option.toLowerCase().includes(filterValue));
+    });
+    return filteredOptions;
+  }
 }
+
