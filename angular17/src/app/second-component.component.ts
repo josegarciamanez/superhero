@@ -7,7 +7,7 @@ import { Hero } from './models/user.interface';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {map, startWith} from 'rxjs/operators';
+import {map, startWith, switchMap} from 'rxjs/operators';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
@@ -26,7 +26,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
   template: `
   <div class="container">
     <form class="example-form">
-    <mat-form-field class="example-full-width">
+    <mat-form-field class="example-full-width w-100 mt-3">
       <mat-label>SuperHero</mat-label>
       <input type="text"
             placeholder="Selecciona"
@@ -47,7 +47,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
           <mat-card-header>
             <mat-card-subtitle>{{ hero.name | uppercase }}</mat-card-subtitle>
           </mat-card-header>
-          <img mat-card-image  [src]='hero.image_url' alt="Photo of a Shiba Inu">
+          <img mat-card-image class="h-100"  [src]='hero.image_url' alt="hero.name">
           <mat-card-actions>
             <button mat-button>Edit</button>
             <button mat-button>Delete</button>
@@ -70,9 +70,14 @@ export class SecondComponent implements OnInit {
   myControl = new FormControl('');
   options$: Observable<string[]> = this.userService.options$;
   filteredOptions!: Observable<string[]>;
-  heroes$: Observable<Hero[]> = this.userService.getHeroes();
+  heroes$: Observable<Hero[]>;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) {
+    this.heroes$ = this.myControl.valueChanges.pipe(
+      startWith(''),
+      switchMap(value => this.userService.getHeroes(value))
+    );
+  }
 
   ngOnInit() {
     this.filteredOptions = this.myControl.valueChanges.pipe(

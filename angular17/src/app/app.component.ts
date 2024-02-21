@@ -4,6 +4,8 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { AddHeroDialogComponent } from './components/add-hero-dialog.component';
 
 
 
@@ -25,17 +27,35 @@ import {MatButtonModule} from '@angular/material/button';
       <mat-icon>share</mat-icon>
     </button>
   </mat-toolbar>
-  <a class="px-3 mx-3 btn btn-outline-danger" routerLink="/first-component" routerLinkActive="active" >{{ firstComponent.title }}</a>
-  <a class="btn btn-outline-danger" routerLink="/second-component" routerLinkActive="active" >Second Component</a>
   <router-outlet></router-outlet>
-`,
+  <div class="fixed-action-button">
+  <button mat-fab color="primary" aria-label="Add" (click)="openAddHeroDialog()>
+    <mat-icon>add</mat-icon>
+    </button>
+  </div>
+  `,
   styles: [`
   .example-spacer {
     flex: 1 1 auto;
+  }
+
+  .fixed-action-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
   }
   `],
 })
 export class AppComponent {
   title = 'superhero APP';
   firstComponent = { title: 'Lista Usuarios' };
+  constructor(public dialog: MatDialog) {}
+
+  openAddHeroDialog(): void {
+    const dialogRef = this.dialog.open(AddHeroDialogComponent);
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('El dialogo fue cerrado');
+      console.log(result);
+    });
+  }
 }

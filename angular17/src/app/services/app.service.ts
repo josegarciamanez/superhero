@@ -17,12 +17,13 @@ export class UserService {
     return this.http.get<User[]>('https://jsonplaceholder.typicode.com/users');
   }
 
-  getHeroes(): Observable<Hero[]> {
+  getHeroes(searchValue: string | null = ''): Observable<Hero[]> {
     return this.http.get<Hero[]>('https://65d38d62522627d50109227e.mockapi.io/api/v1/superheroes').pipe(
       map((heroes: Hero[]) => {
-        const heroNames: string[] = heroes.map(hero => hero.name);
+        const filteredHeroes = heroes.filter(hero => hero.name.toLowerCase().includes(searchValue!.toLowerCase()));
+        const heroNames: string[] = filteredHeroes.map(hero => hero.name);
         this.optionsSubject.next(heroNames);
-        return heroes;
+        return filteredHeroes;
       })
     );
   }
